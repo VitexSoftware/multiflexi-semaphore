@@ -15,7 +15,7 @@ properties([
         blockingJobs: '♻️ repo.mutiflexi.eu'
     )
 ])
-node() {
+node('amd64') {
     ansiColor('xterm') {
         stage('SCM Checkout') {
             sh 'sudo chown -R jenkins:jenkins . || true'
@@ -36,7 +36,7 @@ distributions.each { distro ->
         def artifacts = []
         def buildVer = ''
 
-        node {
+        node('amd64') {
             ansiColor('xterm') {
                 stage('Checkout ' + distroName) {
                     sh 'sudo chown -R jenkins:jenkins . || true'
