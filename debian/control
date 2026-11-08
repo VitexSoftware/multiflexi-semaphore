@@ -1,0 +1,28 @@
+Source: multiflexi-semaphore
+Section: web
+Priority: optional
+Maintainer: "Vítězslav Dvořák" <info@vitexsoftware.cz>
+Build-Depends:
+ debhelper-compat (= 13),
+Standards-Version: 4.7.0
+Homepage: https://github.com/VitexSoftware/multiflexi-semaphore
+Rules-Requires-Root: no
+
+Package: multiflexi-semaphore
+Architecture: all
+Multi-Arch: foreign
+Depends: ${misc:Depends}, php-vitexsoftware-multiflexi-core, multiflexi-cli (>= 2.2.0)
+Description: MultiFlexi Semaphore UI credential prototype and action
+ Semaphore UI REST API credential prototype for MultiFlexi core.
+ Provides the CredentialProtoType class that defines SEMAPHORE_URL and
+ SEMAPHORE_TOKEN configuration fields, plus the MultiFlexi\Action\Semaphore
+ action which triggers Ansible playbooks as Semaphore tasks using such
+ a credential.
+
+Package: multiflexi-semaphore-ui
+Architecture: all
+Multi-Arch: foreign
+Depends: ${misc:Depends}, multiflexi-semaphore (= ${binary:Version}), multiflexi-web|multiflexi-web5
+Description: MultiFlexi Semaphore UI components
+ Semaphore credential dialog for MultiFlexi web interface.
+ Probes /api/user with the configured token and shows the token owner.

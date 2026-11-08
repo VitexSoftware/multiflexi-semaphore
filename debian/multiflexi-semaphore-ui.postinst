@@ -1,0 +1,7 @@
+#!/bin/sh
+# postinst script for multiflexi-semaphore-ui
+set -e
+
+#DEBHELPER#
+
+exit 0

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://raw.githubusercontent.com/VitexSoftware/php-vitexsoftware-multiflexi-core/refs/heads/main/schema/credential-prototype.json",
+  "uuid": "d9fecb43-8518-4686-9156-f26035da39f8",
+  "code": "Semaphore",
+  "name": {
+    "en": "Semaphore UI",
+    "cs": "Semaphore UI"
+  },
+  "description": {
+    "en": "Semaphore UI REST API credentials (endpoint + API token) for triggering Ansible playbooks",
+    "cs": "Přihlašovací údaje k REST API Semaphore UI (endpoint + API token) pro spouštění Ansible playbooků"
+  },
+  "version": "1.0",
+  "logo": "Semaphore.svg",
+  "homepage": "https://github.com/VitexSoftware/multiflexi-semaphore",
+  "tags": [
+    "Semaphore",
+    "Ansible",
+    "CI",
+    "Automation"
+  ],
+  "fields": [
+    {
+      "keyword": "SEMAPHORE_URL",
+      "type": "url",
+      "name": "Semaphore Endpoint URI",
+      "description": "Semaphore UI base URL (without /api suffix), e.g. https://semaphore.proxy.spojenet.cz",
+      "required": true
+    },
+    {
+      "keyword": "SEMAPHORE_TOKEN",
+      "type": "password",
+      "name": "Semaphore API Token",
+      "description": "Semaphore API token (Bearer), created in Semaphore UI under user API keys",
+      "required": true
+    }
+  ]
+}

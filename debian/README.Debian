@@ -1,0 +1,12 @@
+multiflexi-semaphore for Debian
+------------------------------
+
+MultiFlexi credential prototype for Semaphore UI REST API
+(SEMAPHORE_URL + SEMAPHORE_TOKEN). After installation run:
+
+    multiflexi-cli credential-prototype:sync
+
+(the package postinst does this automatically) to register the prototype
+in the MultiFlexi database.
+
+ -- Vítězslav Dvořák <info@vitexsoftware.cz>  Sun, 08 Nov 2026 22:30:00 +0100

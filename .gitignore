@@ -1,0 +1,12 @@
+/vendor/
+/.build/
+/.phpunit.cache/
+/.phpunit.result.cache
+debian/debhelper-build-stamp
+debian/*.debhelper
+debian/*.debhelper.log
+debian/*.substvars
+debian/files
+debian/tmp/
+debian/multiflexi-semaphore/
+debian/multiflexi-semaphore-ui/

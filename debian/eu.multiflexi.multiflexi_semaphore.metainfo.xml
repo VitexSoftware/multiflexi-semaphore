@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="addon">
+  <id>eu.multiflexi.multiflexi_semaphore</id>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+  <name>MultiFlexi Semaphore</name>
+  <summary>Semaphore UI REST API credential prototype for MultiFlexi</summary>
+  <description>
+    <p>
+      Provides the Semaphore credential prototype for MultiFlexi core, defining
+      the SEMAPHORE_URL and SEMAPHORE_TOKEN configuration fields required to
+      trigger Ansible playbooks as Semaphore tasks (e.g. SaaS provisioning).
+    </p>
+    <p>
+      Also ships a web UI component that probes /api/user with the configured
+      token and displays the token owner.
+    </p>
+  </description>
+  <icon type="stock">multiflexi-semaphore</icon>
+  <url type="homepage">https://github.com/VitexSoftware/multiflexi-semaphore</url>
+  <url type="bugtracker">https://github.com/VitexSoftware/multiflexi-semaphore/issues</url>
+  <extends>eu.multiflexi.multiflexi</extends>
+  <categories>
+    <category>Network</category>
+    <category>Office</category>
+  </categories>
+  <provides>
+    <library>MultiFlexi/Action/Semaphore.php</library>
+    <library>MultiFlexi/CredentialProtoType/Semaphore.php</library>
+  </provides>
+</component>

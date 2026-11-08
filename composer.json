@@ -1,0 +1,40 @@
+{
+    "name": "vitexsoftware/multiflexi-semaphore",
+    "description": "MultiFlexi credential prototype for Semaphore UI REST API",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vítězslav Dvořák",
+            "email": "info@vitexsoftware.cz"
+        }
+    ],
+    "require": {
+        "vitexsoftware/multiflexi-core": ">=1.0"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "MultiFlexi\\Action\\": "src/MultiFlexi/Action/",
+            "MultiFlexi\\CredentialProtoType\\": "src/MultiFlexi/CredentialProtoType/",
+            "MultiFlexi\\Ui\\CredentialType\\": "src/MultiFlexi/Ui/CredentialType/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Test\\MultiFlexi\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*",
+        "phpstan/phpstan": "*",
+        "friendsofphp/php-cs-fixer": "^3.92",
+        "ergebnis/composer-normalize": "^2.48",
+        "ergebnis/php-cs-fixer-config": "^6.58"
+    },
+    "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true
+        }
+    }
+}

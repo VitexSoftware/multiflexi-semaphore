@@ -1,0 +1,6 @@
+src/MultiFlexi/Action/Semaphore.php               usr/share/php/MultiFlexi/Action/
+src/MultiFlexi/CredentialProtoType/Semaphore.php  usr/share/php/MultiFlexi/CredentialProtoType/
+src/images/Semaphore.svg                          usr/share/multiflexi/images/
+multiflexi-semaphore.svg                          usr/share/icons/hicolor/scalable/apps/
+debian/eu.multiflexi.multiflexi_semaphore.metainfo.xml  usr/share/metainfo/
+multiflexi/semaphore.credprototype.json           usr/share/multiflexi/
