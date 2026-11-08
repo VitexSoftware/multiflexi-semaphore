@@ -72,22 +72,33 @@ class Semaphore extends \MultiFlexi\CredentialProtoType implements \MultiFlexi\c
 
     /**
      * curl error codes that indicate a TLS/certificate problem rather than a
-     * transient network failure.
+     * transient network failure. Literal values on purpose: the CURLE_*
+     * constants are only defined when ext-curl is loaded, and this class is
+     * instantiated by `credential-prototype:sync` in minimal environments
+     * (e.g. package build/test containers) where ext-curl may be absent.
      */
     private const TLS_ERRNOS = [
-        \CURLE_SSL_CONNECT_ERROR,   // 35
-        51,                         // CURLE_PEER_FAILED_VERIFICATION
-        \CURLE_SSL_CERTPROBLEM,     // 58
-        \CURLE_SSL_CIPHER,          // 59
-        \CURLE_SSL_CACERT,          // 60
-        \CURLE_SSL_CACERT_BADFILE,  // 77
-        82,                         // CURLE_SSL_CRL_BADFILE
-        83,                         // CURLE_SSL_ISSUER_ERROR
+        35, // CURLE_SSL_CONNECT_ERROR
+        51, // CURLE_PEER_FAILED_VERIFICATION
+        58, // CURLE_SSL_CERTPROBLEM
+        59, // CURLE_SSL_CIPHER
+        60, // CURLE_SSL_CACERT
+        77, // CURLE_SSL_CACERT_BADFILE
+        82, // CURLE_SSL_CRL_BADFILE
+        83, // CURLE_SSL_ISSUER_ERROR
     ];
 
     #[\Override]
     public function checkAvailability(): \MultiFlexi\CredentialCheckResult
     {
+        if (!\function_exists('curl_init')) {
+            return new \MultiFlexi\CredentialCheckResult(
+                \MultiFlexi\CredentialState::Misconfigured,
+                _('PHP curl extension is not available on this host'),
+                time(),
+            );
+        }
+
         $url = (string) ($this->configFieldsProvided->getFieldByCode('SEMAPHORE_URL')?->getValue() ?? '');
         $token = (string) ($this->configFieldsProvided->getFieldByCode('SEMAPHORE_TOKEN')?->getValue() ?? '');
 
