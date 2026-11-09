@@ -67,7 +67,7 @@
         "en": "Playbook failed",
         "cs": "Playbook selhal"
       },
-      "severity": "danger",
+      "severity": "error",
       "retry": true
     },
     "2": {
@@ -83,7 +83,7 @@
         "en": "Semaphore API error",
         "cs": "Chyba API Semaphore"
       },
-      "severity": "danger",
+      "severity": "error",
       "retry": true
     }
   }
