@@ -27,6 +27,7 @@ declare(strict_types=1);
  *   SEMAPHORE_TEMPLATE_ID            template to run
  *   SEMAPHORE_TIMEOUT                seconds to wait (default 900)
  *   SEMAPHORE_POLL                   poll interval in seconds (default 5)
+ *   SEMAPHORE_EXTRA_VARS             JSON object of static extra variables for the playbook
  *   EVENT_*                          forwarded to the playbook as extra environment
  *
  * Exit codes: 0 success, 1 playbook failed/stopped, 2 timeout, 3 launch/API error.
@@ -91,6 +92,17 @@ $environment = [];
 foreach (getenv() as $key => $value) {
     if (str_starts_with((string) $key, 'EVENT_')) {
         $environment[$key] = (string) $value;
+    }
+}
+
+// Static per-RunTemplate variables first, so event data can never be overridden by them
+$extra = json_decode(cfg('SEMAPHORE_EXTRA_VARS', '{}'), true);
+
+if (\is_array($extra)) {
+    foreach ($extra as $key => $value) {
+        if (\is_scalar($value) && !isset($environment[(string) $key])) {
+            $environment[(string) $key] = (string) $value;
+        }
     }
 }
 

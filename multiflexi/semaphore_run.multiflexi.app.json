@@ -45,6 +45,12 @@
       "description": "Poll interval in seconds",
       "required": false,
       "defval": "5"
+    },
+    "SEMAPHORE_EXTRA_VARS": {
+      "type": "string",
+      "description": "JSON object of static extra variables passed to the playbook, e.g. {\"mock_item\":\"NEXTCLOUD1\"}",
+      "required": false,
+      "defval": "{}"
     }
   },
   "exitCodes": {
