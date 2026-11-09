@@ -4,3 +4,5 @@ src/images/Semaphore.svg                          usr/share/multiflexi/images/
 multiflexi-semaphore.svg                          usr/share/icons/hicolor/scalable/apps/
 debian/eu.multiflexi.multiflexi_semaphore.metainfo.xml  usr/share/metainfo/
 multiflexi/semaphore.credprototype.json           usr/share/multiflexi/
+bin/multiflexi-semaphore-run                      usr/bin/
+multiflexi/semaphore_run.multiflexi.app.json      usr/lib/multiflexi-semaphore/multiflexi/

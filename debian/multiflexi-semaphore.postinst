@@ -6,6 +6,10 @@ case "$1" in
     configure)
         if [ -x /usr/bin/multiflexi-cli ]; then
             multiflexi-cli credential-prototype:sync
+
+            for file in /usr/lib/multiflexi-semaphore/multiflexi/*.json; do
+                [ -f "$file" ] && multiflexi-cli application:import-json --file "$file" || true
+            done
         fi
         ;;
 

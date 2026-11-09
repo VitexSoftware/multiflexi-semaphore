@@ -1,0 +1,145 @@
+#!/usr/bin/php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * This file is part of the MultiFlexi package
+ *
+ * https://multiflexi.eu/
+ *
+ * (c) Vítězslav Dvořák <http://vitexsoftware.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+/*
+ * Launch a Semaphore template, wait for it to finish and exit with its result.
+ *
+ * Unlike the fire-and-forget Semaphore action, the MultiFlexi job (and the Task
+ * behind it) only succeeds when the playbook succeeded, so a failed playbook is
+ * retried by the Task retry policy.
+ *
+ * Environment:
+ *   SEMAPHORE_URL, SEMAPHORE_TOKEN   credential (Semaphore Credential Type)
+ *   SEMAPHORE_PROJECT_ID             project
+ *   SEMAPHORE_TEMPLATE_ID            template to run
+ *   SEMAPHORE_TIMEOUT                seconds to wait (default 900)
+ *   SEMAPHORE_POLL                   poll interval in seconds (default 5)
+ *   EVENT_*                          forwarded to the playbook as extra environment
+ *
+ * Exit codes: 0 success, 1 playbook failed/stopped, 2 timeout, 3 launch/API error.
+ */
+
+const EXIT_OK = 0;
+const EXIT_FAILED = 1;
+const EXIT_TIMEOUT = 2;
+const EXIT_API = 3;
+
+/**
+ * @return array{0: int, 1: null|array<string, mixed>|string}
+ */
+function semaphore(string $method, string $url, string $token, ?array $body = null): array
+{
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        \CURLOPT_CUSTOMREQUEST => $method,
+        \CURLOPT_RETURNTRANSFER => true,
+        \CURLOPT_TIMEOUT => 30,
+        \CURLOPT_HTTPHEADER => ['Authorization: Bearer '.$token, 'Content-Type: application/json', 'Accept: application/json'],
+    ]);
+
+    if ($body !== null) {
+        curl_setopt($ch, \CURLOPT_POSTFIELDS, json_encode($body));
+    }
+
+    $response = curl_exec($ch);
+    $code = (int) curl_getinfo($ch, \CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($response === false) {
+        return [0, null];
+    }
+
+    $decoded = json_decode((string) $response, true);
+
+    return [$code, $decoded ?? (string) $response];
+}
+
+function cfg(string $key, string $default = ''): string
+{
+    $value = getenv($key);
+
+    return $value === false || $value === '' ? $default : $value;
+}
+
+$url = rtrim(cfg('SEMAPHORE_URL'), '/');
+$token = cfg('SEMAPHORE_TOKEN');
+$project = (int) cfg('SEMAPHORE_PROJECT_ID');
+$template = (int) cfg('SEMAPHORE_TEMPLATE_ID');
+$timeout = max(10, (int) cfg('SEMAPHORE_TIMEOUT', '900'));
+$poll = max(1, (int) cfg('SEMAPHORE_POLL', '5'));
+
+if ($url === '' || $token === '' || $project === 0 || $template === 0) {
+    fwrite(\STDERR, "SEMAPHORE_URL, SEMAPHORE_TOKEN, SEMAPHORE_PROJECT_ID and SEMAPHORE_TEMPLATE_ID are required\n");
+    exit(EXIT_API);
+}
+
+$environment = [];
+
+foreach (getenv() as $key => $value) {
+    if (str_starts_with((string) $key, 'EVENT_')) {
+        $environment[$key] = (string) $value;
+    }
+}
+
+$payload = ['template_id' => $template];
+
+if ($environment !== []) {
+    $payload['environment'] = json_encode($environment);
+}
+
+[$code, $task] = semaphore('POST', $url.'/api/project/'.$project.'/tasks', $token, $payload);
+
+if ($code !== 201 || !\is_array($task) || !isset($task['id'])) {
+    fwrite(\STDERR, 'Semaphore launch failed: HTTP '.$code.' '.(\is_string($task) ? $task : json_encode($task))."\n");
+    exit(EXIT_API);
+}
+
+$taskId = (int) $task['id'];
+echo 'Semaphore task #'.$taskId.' started (template '.$template.', key '.cfg('EVENT_IDEMPOTENCY_KEY', '-').")\n";
+
+$deadline = time() + $timeout;
+$status = 'waiting';
+
+while (time() < $deadline) {
+    sleep($poll);
+    [$code, $info] = semaphore('GET', $url.'/api/project/'.$project.'/tasks/'.$taskId, $token);
+
+    if ($code !== 200 || !\is_array($info)) {
+        continue; // transient API error, keep polling until the deadline
+    }
+
+    $status = (string) ($info['status'] ?? 'unknown');
+
+    if (\in_array($status, ['success', 'error', 'stopped'], true)) {
+        break;
+    }
+}
+
+[$code, $lines] = semaphore('GET', $url.'/api/project/'.$project.'/tasks/'.$taskId.'/output', $token);
+
+if ($code === 200 && \is_array($lines)) {
+    foreach (\array_slice($lines, -40) as $line) {
+        echo ($line['output'] ?? '')."\n";
+    }
+}
+
+echo 'Semaphore task #'.$taskId.' finished: '.$status."\n";
+
+exit(match ($status) {
+    'success' => EXIT_OK,
+    'error', 'stopped' => EXIT_FAILED,
+    default => EXIT_TIMEOUT,
+});

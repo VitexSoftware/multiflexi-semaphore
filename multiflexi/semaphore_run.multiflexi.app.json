@@ -1,0 +1,84 @@
+{
+  "$schema": "https://raw.githubusercontent.com/VitexSoftware/php-vitexsoftware-multiflexi-core/refs/heads/main/schema/application.json",
+  "schemaVersion": "3.4.0",
+  "version": "1.0.0",
+  "uuid": "6f0b0a52-3f1e-4c55-9a6e-2d1c7b9c4a31",
+  "name": {
+    "en": "Semaphore Run",
+    "cs": "Semaphore Run"
+  },
+  "description": {
+    "en": "Launch a Semaphore template, wait for it to finish and fail when the playbook fails. EVENT_* variables of the event are forwarded to the playbook. Used for per-item playbooks of a paid invoice.",
+    "cs": "Spustí šablonu v Semaphore, počká na dokončení a selže, pokud playbook selže. Proměnné EVENT_* události se předají playbooku. Používá se pro playbooky jednotlivých položek uhrazené faktury."
+  },
+  "tags": [
+    "Semaphore",
+    "Ansible",
+    "Automation"
+  ],
+  "requirements": [
+    "Semaphore"
+  ],
+  "homepage": "https://github.com/VitexSoftware/multiflexi-semaphore",
+  "executable": "multiflexi-semaphore-run",
+  "setup": "",
+  "cmdparams": "",
+  "environment": {
+    "SEMAPHORE_PROJECT_ID": {
+      "type": "integer",
+      "description": "Semaphore project id",
+      "required": true
+    },
+    "SEMAPHORE_TEMPLATE_ID": {
+      "type": "integer",
+      "description": "Semaphore template id to run",
+      "required": true
+    },
+    "SEMAPHORE_TIMEOUT": {
+      "type": "integer",
+      "description": "Seconds to wait for the playbook",
+      "required": false,
+      "defval": "900"
+    },
+    "SEMAPHORE_POLL": {
+      "type": "integer",
+      "description": "Poll interval in seconds",
+      "required": false,
+      "defval": "5"
+    }
+  },
+  "exitCodes": {
+    "0": {
+      "description": {
+        "en": "Playbook succeeded",
+        "cs": "Playbook uspěl"
+      },
+      "severity": "success",
+      "retry": false
+    },
+    "1": {
+      "description": {
+        "en": "Playbook failed",
+        "cs": "Playbook selhal"
+      },
+      "severity": "danger",
+      "retry": true
+    },
+    "2": {
+      "description": {
+        "en": "Timeout waiting for Semaphore",
+        "cs": "Vypršel čas čekání na Semaphore"
+      },
+      "severity": "warning",
+      "retry": true
+    },
+    "3": {
+      "description": {
+        "en": "Semaphore API error",
+        "cs": "Chyba API Semaphore"
+      },
+      "severity": "danger",
+      "retry": true
+    }
+  }
+}
