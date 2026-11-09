@@ -100,8 +100,21 @@ $extra = json_decode(cfg('SEMAPHORE_EXTRA_VARS', '{}'), true);
 
 if (\is_array($extra)) {
     foreach ($extra as $key => $value) {
-        if (\is_scalar($value) && !isset($environment[(string) $key])) {
-            $environment[(string) $key] = (string) $value;
+        $key = (string) $key;
+
+        // Plain playbook variables only: never Ansible connection/magic variables
+        $reserved = ['hostvars', 'groups', 'group_names', 'inventory_hostname', 'playbook_dir', 'role_path', 'omit'];
+
+        if (preg_match('/^[a-z][a-z0-9_]{0,63}$/', $key) !== 1
+            || str_starts_with($key, 'ansible_')
+            || \in_array($key, $reserved, true)) {
+            fwrite(\STDERR, 'SEMAPHORE_EXTRA_VARS: ignoring disallowed variable name '.$key."\n");
+
+            continue;
+        }
+
+        if (\is_scalar($value) && !isset($environment[$key])) {
+            $environment[$key] = (string) $value;
         }
     }
 }
